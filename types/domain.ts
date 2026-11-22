@@ -29,6 +29,7 @@ export interface ActionApproval {
 export interface TaskRecord {
   id: string;
   title: string;
+  description?: string;
   status: TaskStatus;
   createdAt: string;
   updatedAt: string;
