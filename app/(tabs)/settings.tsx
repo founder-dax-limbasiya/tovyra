@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { Linking, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Card, ListRow, Notice, Page, SectionTitle, Tag, ActionButton } from "../../components/ui";
 import { theme } from "../../constants/theme";
-import { clearProviderConfig, loadProviderSummary, saveProviderConfig, type ProviderSummary } from "../../lib/providers/config";
+import { clearProviderConfig, loadProviderConfig, loadProviderSummary, normalizeProviderBaseUrl, saveProviderConfig, type ProviderSummary } from "../../lib/providers/config";
+import { listAvailableModels } from "../../lib/providers/openai-compatible";
 
 export default function SettingsScreen() {
   const [baseUrl, setBaseUrl] = useState("");
   const [model, setModel] = useState("");
   const [apiKey, setApiKey] = useState("");
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [discoveringModels, setDiscoveringModels] = useState(false);
   const [provider, setProvider] = useState<ProviderSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -34,6 +37,28 @@ export default function SettingsScreen() {
 
   useEffect(() => { void refreshProvider(); }, []);
 
+  const discoverModels = async () => {
+    if (discoveringModels) return;
+    try {
+      setDiscoveringModels(true);
+      setError("");
+      setNotice("");
+      const stored = await loadProviderConfig();
+      const effectiveKey = apiKey.trim() || stored?.apiKey;
+      const normalizedUrl = normalizeProviderBaseUrl(baseUrl, effectiveKey);
+      const models = await listAvailableModels({ baseUrl: normalizedUrl, apiKey: effectiveKey });
+      setAvailableModels(models);
+      if (models.length === 0) {
+        setNotice("The endpoint responded but returned no model IDs. Enter the exact model ID manually.");
+      } else {
+        setNotice(`Found ${models.length} model(s). Select one below.`);
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not discover provider models.");
+    } finally {
+      setDiscoveringModels(false);
+    }
+  };
   const save = async () => {
     if (saving) return;
     try {
@@ -93,16 +118,32 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.field}>
-          <Text style={styles.fieldLabel}>MODEL ID</Text>
+          <View style={styles.modelHeader}>
+            <Text style={styles.fieldLabel}>MODEL ID</Text>
+            <Pressable onPress={() => { void discoverModels(); }} disabled={discoveringModels || !baseUrl.trim()} style={styles.discoverButton}>
+              {discoveringModels ? <ActivityIndicator size="small" color={theme.colors.accent} /> : <Ionicons name="search-outline" size={13} color={theme.colors.accent} />}
+              <Text style={styles.discoverText}>{discoveringModels ? "Finding..." : "Find models"}</Text>
+            </Pressable>
+          </View>
           <TextInput
             value={model}
             onChangeText={setModel}
-            placeholder="Exact model ID from your provider"
+            placeholder="Enter or discover a model ID"
             placeholderTextColor={theme.colors.faint}
             autoCapitalize="none"
             autoCorrect={false}
             style={styles.fieldInput}
           />
+          {availableModels.length > 0 ? (
+            <View style={styles.modelsList}>
+              {availableModels.map((item) => (
+                <Pressable key={item} onPress={() => setModel(item)} style={[styles.modelChip, model === item && styles.modelChipActive]}>
+                  <Text numberOfLines={1} style={[styles.modelChipText, model === item && styles.modelChipTextActive]}>{item}</Text>
+                  {model === item ? <Ionicons name="checkmark" size={13} color={theme.colors.accent} /> : null}
+                </Pressable>
+              ))}
+            </View>
+          ) : null}
         </View>
 
         <View style={styles.field}>
@@ -168,6 +209,14 @@ const styles = StyleSheet.create({
   providerTitle: { color: theme.colors.text, fontSize: 13, fontWeight: "700" },
   providerSubtitle: { color: theme.colors.muted, fontSize: 10, lineHeight: 15 },
   field: { gap: 7 },
+  modelHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  discoverButton: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 9, paddingVertical: 6, borderRadius: 9, backgroundColor: theme.colors.surfaceSoft },
+  discoverText: { color: theme.colors.accent, fontSize: 9, fontWeight: "800" },
+  modelsList: { flexDirection: "row", flexWrap: "wrap", gap: 7, marginTop: 3 },
+  modelChip: { maxWidth: "100%", flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 8, borderRadius: 11, backgroundColor: theme.colors.surfaceSoft, borderWidth: 1, borderColor: theme.colors.border },
+  modelChipActive: { borderColor: theme.colors.accent, backgroundColor: theme.colors.accentDark },
+  modelChipText: { color: theme.colors.muted, fontSize: 9, maxWidth: 225 },
+  modelChipTextActive: { color: theme.colors.accent, fontWeight: "800" },
   fieldLabel: { color: theme.colors.muted, fontSize: 9, fontWeight: "800", letterSpacing: 1.2 },
   fieldInput: { minHeight: 44, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.background, paddingHorizontal: 12, color: theme.colors.text, fontSize: 12 },
   fieldHint: { color: theme.colors.faint, fontSize: 9, lineHeight: 14 },
