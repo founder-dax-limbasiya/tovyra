@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 11 },
   feature: { width: "48%", flexGrow: 1, minHeight: 145, padding: 14, borderRadius: 17, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface, gap: 8 },
   featureIcon: { width: 36, height: 36, borderRadius: 12, alignItems: "center", justifyContent: "center" },
-  featureTitle: { color: theme.colors.text, fontSize: 12, fontWeight: "750" },
+  featureTitle: { color: theme.colors.text, fontSize: 12, fontWeight: "700" },
   featureDetail: { color: theme.colors.muted, fontSize: 10, lineHeight: 15, maxWidth: 130 },
   featureArrow: { position: "absolute", right: 13, top: 16 },
   statusCard: { gap: 11 },
