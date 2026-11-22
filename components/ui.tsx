@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
-import { ScrollView, StyleSheet, Text, View, Pressable, type ViewStyle } from "react-native";
+import type { ComponentProps, ReactNode, TextStyle } from "react";
+import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../constants/theme";
 
-type IconName = React.ComponentProps<typeof Ionicons>["name"];
+type IconName = ComponentProps<typeof Ionicons>["name"];
 
 export function Page({ title, subtitle, eyebrow, children }: { title: string; subtitle?: string; eyebrow?: string; children: ReactNode }) {
   return (
@@ -21,7 +21,7 @@ export function Page({ title, subtitle, eyebrow, children }: { title: string; su
   );
 }
 
-export function Card({ children, style }: { children: ReactNode; style?: ViewStyle }) {
+export function Card({ children, style }: { children: ReactNode; style?: TextStyle }) {
   return <View style={[styles.card, style]}>{children}</View>;
 }
 
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   page: { paddingHorizontal: 21, paddingTop: 20, paddingBottom: 34, gap: 18 },
   pageHeader: { gap: 8, marginBottom: 4 },
   eyebrow: { color: theme.colors.accent, fontSize: 10, fontWeight: "800", letterSpacing: 1.8 },
-  pageTitle: { color: theme.colors.text, fontSize: 31, lineHeight: 37, fontWeight: "750", letterSpacing: -0.8 },
+  pageTitle: { color: theme.colors.text, fontSize: 31, lineHeight: 37, fontWeight: "700", letterSpacing: -0.8 },
   pageSubtitle: { color: theme.colors.muted, fontSize: 13, lineHeight: 20, maxWidth: 340 },
   card: { padding: 16, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.card, gap: 12 },
   sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 5 },
