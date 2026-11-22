@@ -47,6 +47,22 @@ npx expo start
 
 Use Expo Go or an Android development build to preview on a phone. Native capabilities may require a development build.
 
+## Android install build
+
+An internal Android APK profile is configured in `eas.json`. After installing EAS CLI and signing in to an Expo account, run:
+
+```bash
+npx eas-cli build --platform android --profile preview
+```
+
+EAS will build an installable APK and provide a download link when the remote build completes. A Play Store Android App Bundle profile is also configured as `production`:
+
+```bash
+npx eas-cli build --platform android --profile production
+```
+
+Remote builds require an Expo account and are subject to the account's available build quota. No APK has been built or tested yet.
+
 ## Current limitations
 
 This repository currently contains the mobile UI foundation only. Authentication, cloud sync, model execution, tool connections, permission enforcement, background routine scheduling and end-to-end tests are not implemented. Tasks and memory entries use standard on-device SQLite storage. Local memory uses standard SQLite storage on the device and is not SQLCipher-encrypted in this prototype. The interface intentionally avoids pretending these services are active.
