@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   memoryHero: { padding: 18 },
   heroTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   memoryIcon: { width: 46, height: 46, borderRadius: 16, backgroundColor: theme.colors.accentDark, alignItems: "center", justifyContent: "center" },
-  heroTitle: { color: theme.colors.text, fontSize: 19, lineHeight: 25, fontWeight: "750" },
+  heroTitle: { color: theme.colors.text, fontSize: 19, lineHeight: 25, fontWeight: "700" },
   heroCopy: { color: theme.colors.muted, fontSize: 11, lineHeight: 18 },
   controlRow: { flexDirection: "row", alignItems: "center", gap: 12, padding: 14, borderRadius: 15, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border },
   controlTitle: { color: theme.colors.text, fontSize: 12, fontWeight: "700" },
