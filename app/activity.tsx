@@ -28,7 +28,7 @@ export default function ActivityScreen() {
 
   return (
     <Page eyebrow="TRANSPARENCY" title="Activity" subtitle="A local record of memory changes and, later, approved agent actions.">
-      <Notice title="Local audit events" detail="For now, this history records memory entries saved or deleted on this phone. Agent and external tool events will appear only when those systems are built." icon="shield-checkmark-outline" />
+      <Notice title="Local audit events" detail="For now, this history records memory entries saved, edited or deleted on this phone. Agent and external tool events will appear only when those systems are built." icon="shield-checkmark-outline" />
       {error ? <Notice title="Could not load activity" detail={error} icon="alert-circle-outline" /> : null}
       {loading ? (
         <View style={styles.loading}><ActivityIndicator color={theme.colors.accent} /><Text style={styles.loadingText}>Loading activity...</Text></View>
