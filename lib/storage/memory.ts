@@ -78,3 +78,20 @@ export async function updateMemoryEntry(
     // The memory update takes precedence over optional activity logging.
   }
 }
+
+export async function deleteAllMemoryEntries(): Promise<number> {
+  const database = await getLocalDatabase();
+  const row = await database.getFirstAsync<{ count: number }>(
+    "SELECT COUNT(*) AS count FROM memory_entries"
+  );
+  const count = row?.count ?? 0;
+  await database.runAsync("DELETE FROM memory_entries");
+  if (count > 0) {
+    try {
+      await recordActivity("memory_cleared", "All memories deleted", `Deleted ${count} memory entries from this device.`);
+    } catch {
+      // The requested deletion takes precedence over optional activity logging.
+    }
+  }
+  return count;
+}
