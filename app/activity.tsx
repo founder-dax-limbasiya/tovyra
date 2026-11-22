@@ -27,8 +27,8 @@ export default function ActivityScreen() {
   }, [refresh]);
 
   return (
-    <Page eyebrow="TRANSPARENCY" title="Activity" subtitle="A local record of memory changes and, later, approved agent actions.">
-      <Notice title="Local audit events" detail="For now, this history records memory and task changes made on this phone. Agent and external tool events will appear only when those systems are built." icon="shield-checkmark-outline" />
+    <Page eyebrow="TRANSPARENCY" title="Activity" subtitle="A local record of memory, task and approved tool changes.">
+      <Notice title="Local audit events" detail="This history records local memory and task changes, plus approval outcomes for the two local chat tools. External tool execution is not available." icon="shield-checkmark-outline" />
       {error ? <Notice title="Could not load activity" detail={error} icon="alert-circle-outline" /> : null}
       {loading ? (
         <View style={styles.loading}><ActivityIndicator color={theme.colors.accent} /><Text style={styles.loadingText}>Loading activity...</Text></View>
@@ -45,7 +45,7 @@ export default function ActivityScreen() {
             <View key={event.id} style={styles.eventRow}>
               <View style={styles.eventRail}>
                 <View style={styles.eventIcon}>
-                  <Ionicons name={event.eventType === "memory_deleted" || event.eventType === "task_deleted" ? "trash-outline" : event.eventType.startsWith("task_") ? "checkbox-outline" : "bookmark-outline"} size={16} color={theme.colors.accent} />
+                  <Ionicons name={event.eventType.includes("rejected") || event.eventType.includes("failed") || event.eventType.includes("deleted") ? "shield-outline" : event.eventType.startsWith("task_") ? "checkbox-outline" : event.eventType.startsWith("tool_") ? "shield-checkmark-outline" : "bookmark-outline"} size={16} color={theme.colors.accent} />
                 </View>
                 {index < events.length - 1 ? <View style={styles.eventLine} /> : null}
               </View>
