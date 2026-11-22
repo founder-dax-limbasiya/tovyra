@@ -38,11 +38,19 @@ export async function addMemoryEntry(
     now,
     now
   );
-  await recordActivity("memory_created", "Memory saved", `Saved a ${category} entry on this device.`);
+  try {
+    await recordActivity("memory_created", "Memory saved", `Saved a ${category} entry on this device.`);
+  } catch {
+    // A memory write should not fail just because the optional activity log is unavailable.
+  }
 }
 
 export async function deleteMemoryEntry(id: string): Promise<void> {
   const database = await getLocalDatabase();
   await database.runAsync("DELETE FROM memory_entries WHERE id = ?", id);
-  await recordActivity("memory_deleted", "Memory deleted", "A saved memory entry was deleted from this device.");
+  try {
+    await recordActivity("memory_deleted", "Memory deleted", "A saved memory entry was deleted from this device.");
+  } catch {
+    // Deletion takes precedence over optional activity logging.
+  }
 }
