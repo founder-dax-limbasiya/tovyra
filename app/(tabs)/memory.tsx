@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View 
 import { Ionicons } from "@expo/vector-icons";
 import { ActionButton, Card, Notice, Page, SectionTitle, Tag } from "../../components/ui";
 import { theme } from "../../constants/theme";
-import { addMemoryEntry, deleteMemoryEntry, listMemoryEntries } from "../../lib/storage/memory";
+import { addMemoryEntry, deleteMemoryEntry, listMemoryEntries, updateMemoryEntry } from "../../lib/storage/memory";
 import type { MemoryRecord } from "../../types/domain";
 
 const categories: { id: MemoryRecord["category"]; label: string }[] = [
@@ -17,6 +17,7 @@ export default function MemoryScreen() {
   const [entries, setEntries] = useState<MemoryRecord[]>([]);
   const [category, setCategory] = useState<MemoryRecord["category"]>("preference");
   const [content, setContent] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -25,8 +26,7 @@ export default function MemoryScreen() {
   const refresh = async () => {
     try {
       setError("");
-      const nextEntries = await listMemoryEntries();
-      setEntries(nextEntries);
+      setEntries(await listMemoryEntries());
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not load local memory.");
     } finally {
@@ -38,14 +38,25 @@ export default function MemoryScreen() {
     void refresh();
   }, []);
 
+  const clearEditor = () => {
+    setContent("");
+    setCategory("preference");
+    setEditingId(null);
+  };
+
   const save = async () => {
     if (!content.trim() || saving) return;
     try {
       setSaving(true);
       setError("");
-      await addMemoryEntry(category, content);
-      setContent("");
-      setNotice("Saved to this device. It will still be here after you close the app.");
+      if (editingId) {
+        await updateMemoryEntry(editingId, category, content);
+        setNotice("Memory updated on this device.");
+      } else {
+        await addMemoryEntry(category, content);
+        setNotice("Saved to this device. It will still be here after you close the app.");
+      }
+      clearEditor();
       await refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not save this memory.");
@@ -54,10 +65,19 @@ export default function MemoryScreen() {
     }
   };
 
+  const beginEdit = (entry: MemoryRecord) => {
+    setEditingId(entry.id);
+    setCategory(entry.category);
+    setContent(entry.content);
+    setNotice("");
+    setError("");
+  };
+
   const remove = async (id: string) => {
     try {
       setError("");
       await deleteMemoryEntry(id);
+      if (editingId === id) clearEditor();
       setNotice("Memory deleted from this device.");
       await refresh();
     } catch (cause) {
@@ -87,8 +107,9 @@ export default function MemoryScreen() {
         <Text style={styles.heroCopy}>Entries are stored in the app's local SQLite database. They are not synced to a cloud account or sent to an AI model.</Text>
       </Card>
 
-      <SectionTitle title="Save a memory" detail="LOCAL STORAGE" />
+      <SectionTitle title={editingId ? "Edit memory" : "Save a memory"} detail="LOCAL STORAGE" />
       <Card style={styles.editor}>
+        {editingId ? <Tag label="EDITING SAVED ENTRY" tone="blue" /> : null}
         <View style={styles.categoryRow}>
           {categories.map((item) => (
             <Pressable key={item.id} onPress={() => setCategory(item.id)} style={[styles.categoryChip, category === item.id && styles.categoryChipActive]}>
@@ -108,8 +129,11 @@ export default function MemoryScreen() {
         />
         <View style={styles.editorFooter}>
           <Text style={styles.characterCount}>{content.length}/1,000</Text>
-          <View style={{ width: 130 }}>
-            <ActionButton title={saving ? "Saving..." : "Save memory"} icon="bookmark-outline" onPress={save} disabled={!content.trim() || saving} />
+          <View style={styles.editorButtons}>
+            {editingId ? <ActionButton title="Cancel" secondary onPress={clearEditor} /> : null}
+            <View style={{ width: 138 }}>
+              <ActionButton title={saving ? "Saving..." : editingId ? "Save changes" : "Save memory"} icon="bookmark-outline" onPress={save} disabled={!content.trim() || saving} />
+            </View>
           </View>
         </View>
       </Card>
@@ -124,19 +148,24 @@ export default function MemoryScreen() {
         <Card style={styles.emptyCard}>
           <Ionicons name="bookmark-outline" size={25} color={theme.colors.faint} />
           <Text style={styles.emptyTitle}>Nothing saved yet</Text>
-          <Text style={styles.emptyCopy}>Add a preference, goal or useful piece of context above. You can remove it later.</Text>
+          <Text style={styles.emptyCopy}>Add a preference, goal or useful piece of context above. You can edit or remove it later.</Text>
         </Card>
       ) : (
         entries.map((entry) => (
           <Card key={entry.id} style={styles.entryCard}>
             <View style={styles.entryTop}>
               <Tag label={entry.category.toUpperCase()} tone="blue" />
-              <Pressable onPress={() => confirmDelete(entry)} hitSlop={10} style={styles.deleteButton} accessibilityLabel="Delete memory">
-                <Ionicons name="trash-outline" size={16} color={theme.colors.danger} />
-              </Pressable>
+              <View style={styles.entryActions}>
+                <Pressable onPress={() => beginEdit(entry)} hitSlop={10} style={styles.editButton} accessibilityLabel="Edit memory">
+                  <Ionicons name="create-outline" size={16} color={theme.colors.blue} />
+                </Pressable>
+                <Pressable onPress={() => confirmDelete(entry)} hitSlop={10} style={styles.deleteButton} accessibilityLabel="Delete memory">
+                  <Ionicons name="trash-outline" size={16} color={theme.colors.danger} />
+                </Pressable>
+              </View>
             </View>
             <Text style={styles.entryContent}>{entry.content}</Text>
-            <Text style={styles.entryDate}>Saved {new Date(entry.createdAt).toLocaleString()}</Text>
+            <Text style={styles.entryDate}>Updated {new Date(entry.updatedAt).toLocaleString()}</Text>
           </Card>
         ))
       )}
@@ -159,7 +188,8 @@ const styles = StyleSheet.create({
   categoryText: { color: theme.colors.muted, fontSize: 10, fontWeight: "700" },
   categoryTextActive: { color: theme.colors.accent },
   memoryInput: { minHeight: 88, color: theme.colors.text, fontSize: 13, lineHeight: 20, padding: 12, backgroundColor: theme.colors.background, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.border },
-  editorFooter: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  editorFooter: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
+  editorButtons: { flexDirection: "row", alignItems: "center", gap: 7 },
   characterCount: { color: theme.colors.faint, fontSize: 9 },
   loading: { flexDirection: "row", alignItems: "center", gap: 10, padding: 15 },
   loadingText: { color: theme.colors.muted, fontSize: 11 },
@@ -168,6 +198,8 @@ const styles = StyleSheet.create({
   emptyCopy: { color: theme.colors.muted, fontSize: 10, lineHeight: 16, textAlign: "center", maxWidth: 250 },
   entryCard: { gap: 10 },
   entryTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  entryActions: { flexDirection: "row", alignItems: "center", gap: 7 },
+  editButton: { width: 30, height: 30, alignItems: "center", justifyContent: "center", borderRadius: 10, backgroundColor: theme.colors.surfaceSoft },
   deleteButton: { width: 30, height: 30, alignItems: "center", justifyContent: "center", borderRadius: 10, backgroundColor: theme.colors.surfaceSoft },
   entryContent: { color: theme.colors.text, fontSize: 12, lineHeight: 19 },
   entryDate: { color: theme.colors.faint, fontSize: 9 },
