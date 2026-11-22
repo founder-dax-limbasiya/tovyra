@@ -1,5 +1,5 @@
-import type { ComponentProps, ReactNode, TextStyle, ViewStyle } from "react";
-import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
+import type { ComponentProps, ReactNode } from "react";
+import { ScrollView, StyleSheet, Text, View, Pressable, type TextStyle, type ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../constants/theme";
