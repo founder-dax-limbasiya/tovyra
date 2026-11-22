@@ -54,3 +54,27 @@ export async function deleteMemoryEntry(id: string): Promise<void> {
     // Deletion takes precedence over optional activity logging.
   }
 }
+
+export async function updateMemoryEntry(
+  id: string,
+  category: MemoryRecord["category"],
+  content: string
+): Promise<void> {
+  const normalized = content.trim();
+  if (!normalized) throw new Error("Write a memory before saving it.");
+  if (normalized.length > 1000) throw new Error("Memories must be 1,000 characters or fewer.");
+
+  const database = await getLocalDatabase();
+  await database.runAsync(
+    "UPDATE memory_entries SET category = ?, content = ?, updated_at = ? WHERE id = ?",
+    category,
+    normalized,
+    new Date().toISOString(),
+    id
+  );
+  try {
+    await recordActivity("memory_updated", "Memory updated", "A saved memory entry was edited on this device.");
+  } catch {
+    // The memory update takes precedence over optional activity logging.
+  }
+}
