@@ -2,40 +2,57 @@
 
 **Your other mind. Your rules.**
 
-OTHRI is an open-source, Android-first personal AI workspace designed to bring conversations, memory, agents, routines and permission-controlled actions into one mobile experience.
+OTHRI is an open-source, Android-first personal AI workspace bringing chat, memory, tasks, agents, routines and permission-controlled actions into one mobile experience.
 
 - **Repository:** `founder-dax-limbasiya/tovyra`
 - **Product:** OTHRI
-- **Client:** Expo SDK 58 + React Native 0.88 + TypeScript
-- **Initial platform:** Android
-- **Current stage:** mobile UI foundation
+- **Client:** Expo SDK 58, React Native 0.88, TypeScript
+- **Initial target:** Android
+- **Current stage:** early mobile prototype
 
-## Current mobile screens
+## Current screens and working features
 
 - **Home:** workspace overview and prompt hand-off to Chat.
+- **Chat:** calls the OpenAI-compatible endpoint that you configure. Conversation messages stay in screen memory only; they are not persisted yet.
 - **Tasks:** create, list, complete, reopen and delete tasks stored locally on the phone.
-- **Chat:** conversation composer with an explicit local-preview state; messages are not sent because no model backend is connected.
-- **Agents:** catalogue of planning, research, writing and organiser agent concepts. These are templates, not executable agents.
-- **Memory:** create, list and delete personal memory entries stored in the phone's local SQLite database.
-- **Activity:** records local memory and task changes. Agent and external tool audit events are not implemented yet.
-- **Settings:** provider, tool, permission and privacy setup placeholders.
-- **Activity:** empty audit view until real actions exist.
+- **Memory:** create, list, edit and delete personal memory entries stored in the phone's local SQLite database.
+- **Activity:** records local memory and task changes.
+- **Agents:** catalogue of planning, research, writing and organiser concepts. These are templates, not executable agents.
+- **Permissions:** default-deny policy design. No external tools are connected and no actions can be approved or executed yet.
+- **Settings:** BYOK endpoint setup, local storage status and privacy controls.
 - **Routines:** draft workflow templates. Nothing is scheduled or run in the background.
+
+## Connect a model (BYOK)
+
+Open Settings and enter the API base URL and exact model ID supported by your OpenAI-compatible service. OTHRI calls the `/chat/completions` endpoint directly from the phone.
+
+For a self-hosted Ollama server on your private Wi-Fi, the base URL is commonly:
+
+```text
+http://192.168.1.10:11434/v1
+```
+
+Replace the example address with the server's actual LAN IP and enter the model ID that is installed there. Leave the API key blank for a local Ollama server. The Android phone must be able to reach that server on the network.
+
+For an internet-hosted provider, use an HTTPS API base URL and the provider's API key. HTTP is accepted only for private/local hosts, and a key is rejected over HTTP. Provider settings, including the optional key, are stored using Expo SecureStore, which uses Android Keystore-backed encryption. The key is not hard-coded, committed to Git or sent through an OTHRI backend.
+
+**Network caution:** a local Ollama HTTP connection is not encrypted in transit. Use it only on a trusted private network, and do not send sensitive prompts across untrusted Wi-Fi. Running a local model still requires a computer or server with enough resources; the app itself does not provide free inference compute.
 
 ## Product principles
 
 1. **One personal workspace:** chat, agents, memory, tasks, routines and activity belong together.
 2. **User control first:** external or irreversible actions require explicit, scoped approval.
 3. **Mobile first:** thumb-friendly navigation, readable layouts and graceful small-screen behavior.
-4. **Provider flexible:** model providers and tool integrations must be replaceable.
+4. **Provider flexible:** model providers and tool integrations should be replaceable.
 5. **Honest status:** queued, running, waiting for approval, completed, failed and cancelled must be distinct states.
-6. **Privacy by design:** never ship provider secrets in the mobile app or logs.
+6. **Privacy by design:** never commit provider secrets or log them.
 
 ## Architecture direction
 
 - Expo Router + React Native for the Android-first client.
-- A separately deployable backend for authentication, orchestration, durable memory, tool execution and audit events.
-- Provider adapters for user-supplied model endpoints.
+- Expo SecureStore for device-local provider settings and keys.
+- Expo SQLite for local memory, tasks and activity records.
+- A separately deployable backend remains planned for authentication, shared orchestration, durable cloud sync and controlled tool execution.
 - A permission gateway that defaults to deny and records approvals and outcomes.
 
 ## Development
@@ -65,8 +82,8 @@ Remote builds require an Expo account and are subject to the account's available
 
 ## Current limitations
 
-This repository currently contains the mobile UI foundation only. Authentication, cloud sync, model execution, tool connections, permission enforcement, background routine scheduling and end-to-end tests are not implemented. Tasks and memory entries use standard on-device SQLite storage. Local memory uses standard SQLite storage on the device and is not SQLCipher-encrypted in this prototype. The interface intentionally avoids pretending these services are active.
+Authentication, cloud sync, model-tool calling, agent execution, external connectors, server-side approval enforcement, background routine scheduling and end-to-end tests are not implemented. Chat uses ordinary non-streaming OpenAI-compatible completions. Chat history is not persisted. Local memory, tasks and activity use standard SQLite and are not SQLCipher-encrypted in this prototype. The permission centre is a design screen, not an executable action gateway.
 
 ## Open-source and licensing policy
 
-Check every dependency and upstream component before integration. Preserve required notices and licenses. Do not copy GPL-licensed code into a permissively licensed distribution without an explicit decision to adopt its obligations. The project's own distribution license has not yet been selected.
+See [the upstream review](docs/upstream-review.md). Check each dependency and upstream component before reuse. Preserve required notices and licenses. Do not copy GPL-licensed code into a permissively licensed distribution without an explicit decision to adopt its obligations. The project's own distribution license has not yet been selected.
