@@ -1,7 +1,6 @@
 import { router } from "expo-router";
 import { Linking } from "react-native";
 import { Card, ListRow, Notice, Page, SectionTitle, Tag } from "../../components/ui";
-import { theme } from "../../constants/theme";
 import { Text, View, StyleSheet } from "react-native";
 
 export default function SettingsScreen() {
@@ -36,7 +35,7 @@ export default function SettingsScreen() {
       <SectionTitle title="More" />
       <Card style={{ gap: 2 }}>
         <ListRow icon="repeat-outline" title="Routines" detail="Review workflow templates" onPress={() => router.push("/routines")} />
-        <ListRow icon="logo-github" title="Source repository" detail="Open the OTHRI mobile source" />
+        <ListRow icon="logo-github" title="Source repository" detail="Open the OTHRI mobile source" onPress={() => Linking.openURL("https://github.com/founder-dax-limbasiya/tovyra")} />
         <ListRow icon="information-circle-outline" title="About OTHRI" detail="Early mobile foundation · v0.1.0" />
       </Card>
       <Text style={styles.footer}>OTHRI is an early prototype. Provider connectivity, authentication, cloud sync and tool execution are not yet active.</Text>
