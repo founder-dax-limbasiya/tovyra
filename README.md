@@ -15,7 +15,8 @@ OTHRI is an open-source, Android-first personal AI workspace designed to bring c
 - **Home:** workspace overview and prompt hand-off to Chat.
 - **Chat:** conversation composer with an explicit local-preview state; messages are not sent because no model backend is connected.
 - **Agents:** catalogue of planning, research, writing and organiser agent concepts. These are templates, not executable agents.
-- **Memory:** transparent memory design preview. No personal memory is persisted by this prototype.
+- **Memory:** create, list and delete personal memory entries stored in the phone's local SQLite database.
+- **Activity:** records local memory save/delete events. Agent and external tool audit events are not implemented yet.
 - **Settings:** provider, tool, permission and privacy setup placeholders.
 - **Activity:** empty audit view until real actions exist.
 - **Routines:** draft workflow templates. Nothing is scheduled or run in the background.
@@ -47,7 +48,7 @@ Use Expo Go or an Android development build to preview on a phone. Native capabi
 
 ## Current limitations
 
-This repository currently contains the mobile UI foundation only. Authentication, persistent storage, model execution, tool connections, permission enforcement, background routines and end-to-end tests are not implemented. The interface intentionally avoids pretending these services are active.
+This repository currently contains the mobile UI foundation only. Authentication, cloud sync, model execution, tool connections, permission enforcement, background routines and end-to-end tests are not implemented. Local memory uses standard SQLite storage on the device and is not SQLCipher-encrypted in this prototype. The interface intentionally avoids pretending these services are active.
 
 ## Open-source and licensing policy
 
