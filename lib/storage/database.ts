@@ -28,6 +28,18 @@ export async function getLocalDatabase(): Promise<SQLite.SQLiteDatabase> {
         );
         CREATE INDEX IF NOT EXISTS activity_entries_created_at_idx
           ON activity_entries(created_at DESC);
+
+        CREATE TABLE IF NOT EXISTS local_tasks (
+          id TEXT PRIMARY KEY NOT NULL,
+          title TEXT NOT NULL,
+          description TEXT NOT NULL DEFAULT '',
+          status TEXT NOT NULL DEFAULT 'queued'
+            CHECK(status IN ('queued', 'running', 'waiting_for_approval', 'completed', 'failed', 'cancelled')),
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS local_tasks_created_at_idx
+          ON local_tasks(created_at DESC);
       `);
       return database;
     })();
