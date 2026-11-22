@@ -37,22 +37,23 @@ A tool action should move through explicit states:
 5. The backend executes the approved action and stores the result.
 6. The mobile client displays the server-reported outcome and audit record.
 
-The client must not infer that an action succeeded merely because a request was submitted. The current Permissions screen documents this intended policy; no tool execution or approval gateway is active yet.
+The client must not infer that an action succeeded merely because a request was submitted. The current client-side approval flow supports only two device-local operations: creating a local task and saving a local memory. The UI displays exact model-supplied arguments and waits for an explicit approval for each call. The allowlist and argument validator reject unknown tool names and unexpected fields. This is suitable only for these local prototype operations; it is not a trusted security boundary for future external integrations. External actions must move behind server-enforced authentication, scope validation and approval.
 
 ## Current implementation boundary
 
 Implemented:
 - Expo/React Native mobile shell and navigation.
-- BYOK OpenAI-compatible, non-streaming chat request.
+- BYOK OpenAI-compatible, non-streaming chat request with model tool calling.
+- Client-side per-call approval for the two allowlisted local actions `create_task` and `save_memory`.
 - Secure device storage for provider settings.
 - Local SQLite memory create/list/edit/delete.
 - Local SQLite task create/list/status-change/delete.
-- Local activity records for memory and task changes.
+- Local activity records for memory and task changes, plus local tool approval, rejection and failure outcomes.
 
 Not implemented:
 - Backend service, authentication or cloud sync.
-- Model tool calling, agent execution or provider model discovery.
-- External connectors, action gateway or executable approval flow.
+- Multi-step agent orchestration, agent autonomy or provider model discovery.
+- External connectors and server-side action gateway/approval enforcement.
 - Scheduled routines, background jobs or push notifications.
 - SQLCipher database encryption or automated backup.
 - End-to-end tests and a verified Android build.
