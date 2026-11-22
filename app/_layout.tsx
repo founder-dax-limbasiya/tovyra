@@ -10,6 +10,7 @@ export default function RootLayout() {
         <Stack.Screen name="activity" options={{ headerShown: false }} />
         <Stack.Screen name="routines" options={{ headerShown: false }} />
         <Stack.Screen name="tasks" options={{ headerShown: false }} />
+        <Stack.Screen name="permissions" options={{ headerShown: false }} />
       </Stack>
     </>
   );
