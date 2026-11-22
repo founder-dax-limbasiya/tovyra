@@ -30,5 +30,8 @@ jobs:
       - name: Export Android bundle
         run: npx expo export --platform android
 
+      - name: Configure Expo Router type generation
+        run: npx expo customize tsconfig.json
+
       - name: Type-check
         run: npm run typecheck
