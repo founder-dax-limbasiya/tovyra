@@ -1,4 +1,4 @@
-import type { ComponentProps, ReactNode, TextStyle } from "react";
+import type { ComponentProps, ReactNode, TextStyle, ViewStyle } from "react";
 import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,7 +21,7 @@ export function Page({ title, subtitle, eyebrow, children }: { title: string; su
   );
 }
 
-export function Card({ children, style }: { children: ReactNode; style?: TextStyle }) {
+export function Card({ children, style }: { children: ReactNode; style?: ViewStyle }) {
   return <View style={[styles.card, style]}>{children}</View>;
 }
 
@@ -38,8 +38,8 @@ export function Eyebrow({ children }: { children: ReactNode }) {
   return <Text style={styles.eyebrow}>{children}</Text>;
 }
 
-export function BodyText({ children, style }: { children: ReactNode; style?: ViewStyle }) {
-  return <Text style={[styles.bodyText, style as object]}>{children}</Text>;
+export function BodyText({ children, style }: { children: ReactNode; style?: TextStyle }) {
+  return <Text style={[styles.bodyText, style]}>{children}</Text>;
 }
 
 export function Tag({ label, tone = "neutral" }: { label: string; tone?: "neutral" | "accent" | "blue" | "warning" }) {
