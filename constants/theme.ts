@@ -1,0 +1,20 @@
+export const theme = {
+  colors: {
+    background: "#090B10",
+    surface: "#121722",
+    surfaceRaised: "#171F2C",
+    surfaceSoft: "#1D2938",
+    border: "#263142",
+    text: "#F4F7FB",
+    muted: "#929EAE",
+    faint: "#657184",
+    accent: "#B8F36B",
+    accentDark: "#26351E",
+    blue: "#8CB9FF",
+    purple: "#D5A7FF",
+    orange: "#FFBE85",
+    danger: "#FF8F8F",
+  },
+  radius: { card: 18, large: 24, pill: 999 },
+  space: { xs: 6, sm: 10, md: 14, lg: 20, xl: 28, xxl: 36 },
+} as const;
