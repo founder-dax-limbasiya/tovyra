@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import { Linking } from "react-native";
 import { Card, ListRow, Notice, Page, SectionTitle, Tag } from "../../components/ui";
 import { theme } from "../../constants/theme";
 import { Text, View, StyleSheet } from "react-native";
