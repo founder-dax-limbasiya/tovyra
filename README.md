@@ -13,7 +13,7 @@ OTHRI is an open-source, Android-first personal AI workspace bringing chat, memo
 ## Current screens and working features
 
 - **Home:** workspace overview and prompt hand-off to Chat.
-- **Chat:** calls the OpenAI-compatible endpoint that you configure. Supports two narrow local tool requests: `create_task` and `save_memory`. Each request shows its exact arguments and waits for your approval. Conversation messages stay in screen memory only; they are not persisted yet.
+- **Chat:** calls the OpenAI-compatible endpoint that you configure. Supports two narrow local tool requests: `create_task` and `save_memory`. Each request shows its exact arguments and waits for your approval. Tool requests from unknown functions are blocked. Conversation messages stay in screen memory only; they are not persisted yet.
 - **Tasks:** create, list, complete, reopen and delete tasks stored locally on the phone.
 - **Memory:** create, list, edit and delete personal memory entries stored in the phone's local SQLite database.
 - **Activity:** records local memory and task changes, plus local chat-tool approval outcomes.
@@ -24,7 +24,7 @@ OTHRI is an open-source, Android-first personal AI workspace bringing chat, memo
 
 ## Connect a model (BYOK)
 
-Open Settings and enter the API base URL and exact model ID supported by your OpenAI-compatible service. OTHRI calls the `/chat/completions` endpoint directly from the phone.
+Open Settings and enter the API base URL for your OpenAI-compatible service. Use **Find models** to load IDs from its `/models` endpoint when available, then select one; you can also enter an ID manually. OTHRI calls `/chat/completions` directly from the phone. Model endpoints must support chat completions and function/tool calling for local task and memory actions.
 
 For a self-hosted Ollama server on your private Wi-Fi, the base URL is commonly:
 
