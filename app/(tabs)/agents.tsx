@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { router } from "expo-router";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ActionButton, Card, Notice, Page, SectionTitle, Tag } from "../../components/ui";
@@ -45,7 +46,7 @@ export default function AgentsScreen() {
       <Card>
         <Text style={styles.bottomTitle}>Your agents, your permissions</Text>
         <Text style={styles.bottomCopy}>When tool execution is added, each agent will receive only the permissions you grant. Sensitive actions will require a separate approval.</Text>
-        <ActionButton title="Review security settings" secondary icon="shield-checkmark-outline" onPress={() => require("expo-router").router.push("/(tabs)/settings")} />
+        <ActionButton title="Review security settings" secondary icon="shield-checkmark-outline" onPress={() => router.push("/(tabs)/settings")} />
       </Card>
     </Page>
   );
