@@ -28,7 +28,7 @@ export default function SettingsScreen() {
       <SectionTitle title="Privacy and data" />
       <Card style={{ gap: 2 }}>
         <ListRow icon="lock-closed-outline" title="Privacy controls" detail="Data export, deletion and retention" right={<Tag label="PLANNED" />} />
-        <ListRow icon="cloud-offline-outline" title="Local-first mode" detail="Understand what stays on your device" right={<Tag label="PLANNED" />} />
+        <ListRow icon="cloud-offline-outline" title="Local-first memory" detail="Memories are stored in this phone’s SQLite database" right={<Tag label="ACTIVE" tone="accent" />} />
         <ListRow icon="document-text-outline" title="Activity audit" detail="See what tools did and who approved it" onPress={() => router.push("/activity")} />
       </Card>
 
