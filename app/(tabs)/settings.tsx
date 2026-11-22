@@ -156,7 +156,7 @@ export default function SettingsScreen() {
         <ListRow icon="logo-github" title="Source repository" detail="Open the OTHRI mobile source" onPress={() => Linking.openURL("https://github.com/founder-dax-limbasiya/tovyra")} />
         <ListRow icon="information-circle-outline" title="About OTHRI" detail="Early mobile foundation · v0.1.0" />
       </Card>
-      <Text style={styles.footer}>Model execution is available only after you configure a compatible endpoint. Agents, tools, approval execution and background routines are not yet active.</Text>
+      <Text style={styles.footer}>Chat works with a configured compatible endpoint. Two local actions (create task and save memory) require your approval. Agent autonomy, external integrations and background routines are not active.</Text>
     </Page>
   );
 }
