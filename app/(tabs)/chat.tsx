@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ActionButton, Card, Notice, Page, Tag } from "../../components/ui";
@@ -58,7 +58,7 @@ export default function ChatScreen() {
         </View>
       </Card>
       {notice ? <Notice title="Draft kept locally in this screen" detail={notice} icon="information-circle-outline" /> : null}
-      <ActionButton title="Provider setup" secondary icon="link-outline" onPress={() => require("expo-router").router.push("/(tabs)/settings")} />
+      <ActionButton title="Provider setup" secondary icon="link-outline" onPress={() => router.push("/(tabs)/settings")} />
     </Page>
   );
 }
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   assistantTitle: { color: theme.colors.text, fontSize: 13, fontWeight: "700" },
   assistantSubtitle: { color: theme.colors.muted, fontSize: 10 },
   welcome: { padding: 18 },
-  welcomeTitle: { color: theme.colors.text, fontSize: 19, fontWeight: "750" },
+  welcomeTitle: { color: theme.colors.text, fontSize: 19, fontWeight: "700" },
   welcomeBody: { color: theme.colors.muted, fontSize: 12, lineHeight: 19 },
   suggestion: { padding: 11, borderRadius: 12, backgroundColor: theme.colors.surfaceSoft },
   suggestionText: { color: theme.colors.blue, fontSize: 11 },
