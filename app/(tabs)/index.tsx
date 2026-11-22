@@ -66,7 +66,7 @@ export default function HomeScreen() {
           <Text style={styles.statusTitle}>Foundation status</Text>
           <Tag label="EARLY BUILD" tone="warning" />
         </View>
-        <Text style={styles.statusCopy}>The mobile interface is taking shape. Model connections, sign-in, persistent memory and real tool execution are not connected yet.</Text>
+        <Text style={styles.statusCopy}>The mobile interface and on-device memory are taking shape. Model connections, sign-in, cloud sync and real tool execution are not connected yet.</Text>
         <ActionButton title="Review app settings" secondary icon="settings-outline" onPress={() => router.push("/(tabs)/settings")} />
       </Card>
     </Page>
