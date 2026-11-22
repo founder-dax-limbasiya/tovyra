@@ -6,7 +6,7 @@ The Android-first client is an Expo Router application. Route screens are groupe
 
 ## Backend boundary
 
-The mobile client must call OTHRI's own backend through `lib/api/client.ts`. The mobile bundle may contain a public API origin, but must never contain model-provider API keys, database service keys, OAuth client secrets or privileged credentials.
+The mobile client talks to OTHRI's own backend through `lib/api/client.ts` when one is configured. Device-only memory currently lives in `lib/storage/` using Expo SQLite. The mobile bundle may contain a public API origin, but must never contain model-provider API keys, database service keys, OAuth client secrets or privileged credentials.
 
 The backend will own:
 - Authentication and user sessions.
@@ -32,4 +32,4 @@ The client must not infer that an action succeeded merely because a request was 
 
 ## Current implementation boundary
 
-The app currently contains a mobile UI foundation and provider-neutral API transport. No backend service, model adapter, auth flow, persistent memory database, tool runner or scheduler is implemented yet. The chat composer intentionally does not send messages while the backend is absent.
+The app currently contains a mobile UI foundation and provider-neutral API transport. No backend service, model adapter, auth flow, cloud memory sync, tool runner or scheduler is implemented yet. Local device memory and its save/delete activity records are implemented with standard SQLite storage; SQLCipher encryption is not enabled. The chat composer intentionally does not send messages while the backend is absent.
