@@ -6,7 +6,7 @@ OTHRI is an open-source, Android-first personal AI workspace designed to bring c
 
 - **Repository:** `founder-dax-limbasiya/tovyra`
 - **Product:** OTHRI
-- **Client:** Expo + React Native + TypeScript
+- **Client:** Expo SDK 58 + React Native 0.88 + TypeScript
 - **Initial platform:** Android
 - **Current stage:** mobile UI foundation
 
