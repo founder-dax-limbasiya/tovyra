@@ -10,6 +10,13 @@ export function Page({ title, subtitle, eyebrow, children }: { title: string; su
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <ScrollView contentContainerStyle={styles.page} showsVerticalScrollIndicator={false}>
+        <View style={styles.brandBar}>
+          <View style={styles.brandMark}><Ionicons name="sparkles-outline" size={16} color={theme.colors.accent} /></View>
+          <Text style={styles.brandName}>OTHRI</Text>
+          <View style={styles.brandDivider} />
+          <Text style={styles.brandMeta}>PERSONAL INTELLIGENCE</Text>
+          <View style={styles.previewTag}><View style={styles.previewDot} /><Text style={styles.previewText}>PREVIEW</Text></View>
+        </View>
         <View style={styles.pageHeader}>
           {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
           <Text style={styles.pageTitle}>{title}</Text>
@@ -85,6 +92,14 @@ export function Notice({ title, detail, icon = "information-circle-outline" }: {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: theme.colors.background },
+  brandBar: { minHeight: 38, flexDirection: "row", alignItems: "center", gap: 9, marginBottom: 4 },
+  brandMark: { width: 30, height: 30, borderRadius: 10, backgroundColor: theme.colors.accentDark, alignItems: "center", justifyContent: "center" },
+  brandName: { color: theme.colors.text, fontSize: 13, fontWeight: "800", letterSpacing: 2.1 },
+  brandDivider: { width: 1, height: 16, backgroundColor: theme.colors.border, marginHorizontal: 2 },
+  brandMeta: { flex: 1, color: theme.colors.faint, fontSize: 8, fontWeight: "700", letterSpacing: 1 },
+  previewTag: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 8, paddingVertical: 5, borderRadius: 20, backgroundColor: theme.colors.surfaceSoft },
+  previewDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: theme.colors.orange },
+  previewText: { color: theme.colors.muted, fontSize: 8, fontWeight: "800", letterSpacing: 0.7 },
   page: { paddingHorizontal: 21, paddingTop: 20, paddingBottom: 34, gap: 18 },
   pageHeader: { gap: 8, marginBottom: 4 },
   eyebrow: { color: theme.colors.accent, fontSize: 10, fontWeight: "800", letterSpacing: 1.8 },
