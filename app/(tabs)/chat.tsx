@@ -34,9 +34,9 @@ export default function ChatScreen() {
       <Card style={styles.welcome}>
         <Text style={styles.welcomeTitle}>What’s on your mind?</Text>
         <Text style={styles.welcomeBody}>Use this space to shape an idea, plan a project or prepare a task. OTHRI will not pretend to answer until a real model provider is configured.</Text>
-        <View style={styles.suggestion}><Text style={styles.suggestionText}>“Help me organise my week”</Text></View>
-        <View style={styles.suggestion}><Text style={styles.suggestionText}>“Break this project into steps”</Text></View>
-        <View style={styles.suggestion}><Text style={styles.suggestionText}>“Remember a preference I choose”</Text></View>
+        <Pressable onPress={() => { setDraft("Help me organise my week"); setNotice(""); }} style={styles.suggestion}><Text style={styles.suggestionText}>“Help me organise my week”</Text></Pressable>
+        <Pressable onPress={() => { setDraft("Break this project into steps"); setNotice(""); }} style={styles.suggestion}><Text style={styles.suggestionText}>“Break this project into steps”</Text></Pressable>
+        <Pressable onPress={() => { setDraft("Remember a preference I choose"); setNotice(""); }} style={styles.suggestion}><Text style={styles.suggestionText}>“Remember a preference I choose”</Text></Pressable>
       </Card>
 
       <Card style={styles.composer}>
