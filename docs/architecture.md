@@ -10,7 +10,7 @@ The Android-first client is an Expo Router application. Route screens are groupe
 - The user's OpenAI-compatible model endpoint is called directly from the device through `lib/providers/openai-compatible.ts`.
 - Provider URL, model ID and optional API key are stored with Expo SecureStore in `lib/providers/config.ts`. On Android, SecureStore uses Android Keystore-backed encryption.
 - Provider keys are not hard-coded into the JS bundle or committed to Git. OTHRI sends them only as authorization to the exact provider URL the user saves.
-- The mobile app accepts HTTPS providers. Plain HTTP is allowed only for loopback or private/local network hosts, and an API key is rejected over HTTP. Local HTTP traffic is still unencrypted in transit and should be used only on a trusted network.
+- The mobile app accepts HTTPS providers. Plain HTTP is allowed only for loopback or private/local network hosts, and an API key is rejected over HTTP. The Android native build permits cleartext so local Ollama can be reached, but the provider URL validator restricts HTTP endpoints to private/local hosts. Local HTTP traffic is still unencrypted in transit and should be used only on a trusted network.
 - `lib/api/client.ts` is a provider-neutral transport boundary for a future OTHRI backend; it is not currently used for chat.
 
 ## Planned backend responsibilities
