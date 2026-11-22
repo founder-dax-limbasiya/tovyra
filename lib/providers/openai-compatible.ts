@@ -142,6 +142,22 @@ export async function createAssistantResponse(
     if (!message) throw new Error("The provider response did not contain a chat message.");
 
     const toolCalls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
+    const validIds = new Set<string>();
+    for (const call of toolCalls) {
+      if (
+        !call ||
+        call.type !== "function" ||
+        typeof call.id !== "string" ||
+        !call.id.trim() ||
+        !call.function ||
+        typeof call.function.name !== "string" ||
+        typeof call.function.arguments !== "string" ||
+        validIds.has(call.id)
+      ) {
+        throw new Error("The provider returned a malformed or duplicate tool call. No local action was performed.");
+      }
+      validIds.add(call.id);
+    }
     const content = typeof message.content === "string" ? message.content.trim() : "";
 
     if (toolCalls.length === 0 && !content) {
