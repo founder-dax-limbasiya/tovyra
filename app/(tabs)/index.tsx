@@ -53,7 +53,7 @@ export default function HomeScreen() {
               </View>
               <Text style={styles.featureTitle}>{item.title}</Text>
               <Text style={styles.featureDetail}>{item.detail}</Text>
-              <Ionicons name="arrow-up-right" size={15} color={theme.colors.faint} style={styles.featureArrow} />
+              <Ionicons name="open-outline" size={15} color={theme.colors.faint} style={styles.featureArrow} />
             </Pressable>
           ))}
         </View>
