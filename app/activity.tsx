@@ -45,7 +45,7 @@ export default function ActivityScreen() {
             <View key={event.id} style={styles.eventRow}>
               <View style={styles.eventRail}>
                 <View style={styles.eventIcon}>
-                  <Ionicons name={event.eventType.includes("rejected") || event.eventType.includes("failed") || event.eventType.includes("deleted") ? "shield-outline" : event.eventType.startsWith("task_") ? "checkbox-outline" : event.eventType.startsWith("tool_") ? "shield-checkmark-outline" : "bookmark-outline"} size={16} color={theme.colors.accent} />
+                  <Ionicons name={event.eventType.includes("deleted") ? "trash-outline" : event.eventType.includes("rejected") || event.eventType.includes("failed") ? "alert-circle-outline" : event.eventType.startsWith("task_") ? "checkbox-outline" : event.eventType.startsWith("tool_") ? "shield-checkmark-outline" : "bookmark-outline"} size={16} color={theme.colors.accent} />
                 </View>
                 {index < events.length - 1 ? <View style={styles.eventLine} /> : null}
               </View>
