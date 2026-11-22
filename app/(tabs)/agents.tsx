@@ -14,7 +14,6 @@ const agents = [
 
 export default function AgentsScreen() {
   const [selected, setSelected] = useState<string | null>(null);
-  const active = agents.find((agent) => agent.id === selected);
 
   return (
     <Page eyebrow="YOUR DIGITAL TEAM" title="Agents" subtitle="Focused assistants for different kinds of work. Each agent will run through a permission-controlled backend.">
