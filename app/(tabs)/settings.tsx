@@ -22,7 +22,7 @@ export default function SettingsScreen() {
       <Card style={{ gap: 2 }}>
         <ListRow icon="hardware-chip-outline" title="Model providers" detail="Provider adapters and server-side credentials" right={<Tag label="PLANNED" />} />
         <ListRow icon="extension-puzzle-outline" title="Connected tools" detail="Review available integrations and scopes" right={<Tag label="PLANNED" />} />
-        <ListRow icon="shield-checkmark-outline" title="Permissions" detail="Approval rules for external actions" right={<Tag label="PLANNED" />} />
+        <ListRow icon="shield-checkmark-outline" title="Permissions" detail="Approval rules for external actions" right={<Tag label="DEFAULT DENY" tone="accent" />} onPress={() => router.push("/permissions")} />
       </Card>
 
       <SectionTitle title="Privacy and data" />
