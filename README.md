@@ -66,7 +66,9 @@ Use Expo Go or an Android development build to preview on a phone. Native capabi
 
 ## Android install build
 
-An internal Android APK profile is configured in `eas.json`. After installing EAS CLI and signing in to an Expo account, run:
+The repository includes a GitHub Actions workflow that builds a directly installable debug APK on each push to `main`, or when you manually run it. From your phone, open the repository, select **Actions → Build OTHRI Android APK → Run workflow**, then download the `othri-android-debug-apk` artifact when the run completes. The artifact is a ZIP containing the APK. Install the APK on your Android phone; Android may ask you to allow installation from your browser or file manager. This debug APK is for testing, not a Play Store release.
+
+A separate EAS internal APK profile is also configured in `eas.json`. After installing EAS CLI and signing in to an Expo account, run:
 
 ```bash
 npx eas-cli build --platform android --profile preview
@@ -78,7 +80,7 @@ EAS will build an installable APK and provide a download link when the remote bu
 npx eas-cli build --platform android --profile production
 ```
 
-Remote builds require an Expo account and are subject to the account's available build quota. No APK has been built or tested yet.
+Remote EAS builds require an Expo account and are subject to its available build quota. The GitHub Actions APK workflow has been committed, but an APK has not yet been confirmed as successfully built or installed.
 
 ## Current limitations
 
