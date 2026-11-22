@@ -1,14 +1,27 @@
 import type { ProviderConfig } from "./config";
 
+export interface ModelToolCall {
+  id: string;
+  type: "function";
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
 export interface ChatTurn {
-  role: "user" | "assistant";
-  content: string;
+  role: "user" | "assistant" | "tool";
+  content: string | null;
+  name?: string;
+  toolCallId?: string;
+  toolCalls?: ModelToolCall[];
 }
 
 interface ChatCompletionResponse {
   choices?: Array<{
     message?: {
       content?: unknown;
+      tool_calls?: ModelToolCall[];
     };
   }>;
   error?: {
@@ -16,16 +29,57 @@ interface ChatCompletionResponse {
   };
 }
 
+export interface AssistantResponse {
+  content: string;
+  toolCalls: ModelToolCall[];
+}
+
+export const OTHRI_LOCAL_TOOLS = [
+  {
+    type: "function",
+    function: {
+      name: "create_task",
+      description: "Create a local task on the user's phone. Only call when the user explicitly asks to add or create a task. The app will ask for approval before saving.",
+      parameters: {
+        type: "object",
+        properties: {
+          title: { type: "string", description: "Short task title, maximum 120 characters." },
+          description: { type: "string", description: "Optional task note, maximum 1000 characters." },
+        },
+        required: ["title"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "save_memory",
+      description: "Save a user-provided fact, preference or goal to local memory. Only call when the user explicitly asks OTHRI to remember or save it. The app will ask for approval before saving.",
+      parameters: {
+        type: "object",
+        properties: {
+          category: { type: "string", enum: ["profile", "preference", "goal", "context"] },
+          content: { type: "string", description: "A concise memory entry, maximum 1000 characters." },
+        },
+        required: ["category", "content"],
+        additionalProperties: false,
+      },
+    },
+  },
+] as const;
+
 const SYSTEM_PROMPT = `You are OTHRI, a personal AI assistant.
 Be useful, direct and transparent. Ask clarifying questions when needed.
 You do not have access to the user's device, files, other apps, accounts or the internet unless the app explicitly provides a connected tool.
-Do not claim to have performed actions, changed settings, saved data or accessed external services unless a connected tool has returned a verified success.
-External, destructive or irreversible actions require explicit user approval. When no tool is connected, explain that you can prepare instructions or a draft but cannot execute the action.`;
+You have two local tools: create_task and save_memory. Use them only when the user clearly asks to create a task or save/remember information. Do not infer permission from a vague statement. The app will show each proposed action to the user and will execute it only after they approve it.
+Never claim a task or memory has been saved until the tool returns a successful result.
+External, destructive or irreversible actions require explicit user approval. You have no external tools and cannot send messages, publish content, control other apps, browse or access accounts.`;
 
-export async function createAssistantReply(
+export async function createAssistantResponse(
   config: ProviderConfig,
   conversation: ChatTurn[]
-): Promise<string> {
+): Promise<AssistantResponse> {
   if (conversation.length === 0) throw new Error("Write a message before sending.");
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 90_000);
@@ -47,12 +101,20 @@ export async function createAssistantReply(
           stream: false,
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
-            ...conversation.map((turn) => ({ role: turn.role, content: turn.content })),
+            ...conversation.map((turn) => ({
+              role: turn.role,
+              content: turn.content,
+              ...(turn.name ? { name: turn.name } : {}),
+              ...(turn.toolCallId ? { tool_call_id: turn.toolCallId } : {}),
+              ...(turn.toolCalls ? { tool_calls: turn.toolCalls } : {}),
+            })),
           ],
+          tools: OTHRI_LOCAL_TOOLS,
+          tool_choice: "auto",
         }),
         signal: controller.signal,
       });
-    } catch (cause) {
+    } catch {
       if (controller.signal.aborted) {
         throw new Error("The provider took too long to respond. Check the server and try again.");
       }
@@ -76,12 +138,20 @@ export async function createAssistantReply(
       throw new Error(`Provider error: ${providerMessage}`);
     }
 
-    const content = payload.choices?.[0]?.message?.content;
-    if (typeof content !== "string" || !content.trim()) {
-      throw new Error("The provider returned no text response. Check the model ID and API compatibility.");
+    const message = payload.choices?.[0]?.message;
+    if (!message) throw new Error("The provider response did not contain a chat message.");
+
+    const toolCalls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
+    const content = typeof message.content === "string" ? message.content.trim() : "";
+
+    if (toolCalls.length === 0 && !content) {
+      throw new Error("The provider returned no text or tool request. Check the model ID and API compatibility.");
+    }
+    if (toolCalls.length > 3) {
+      throw new Error("The model requested too many actions at once. Ask it to handle a maximum of three actions.");
     }
 
-    return content.trim();
+    return { content, toolCalls };
   } finally {
     clearTimeout(timeout);
   }
