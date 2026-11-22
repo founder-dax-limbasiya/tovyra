@@ -7,8 +7,8 @@ import { theme } from "../../constants/theme";
 
 const features = [
   { icon: "sparkles-outline" as const, title: "Agent workspace", detail: "Explore specialist agents", color: theme.colors.accent, route: "/(tabs)/agents" as const },
-  { icon: "albums-outline" as const, title: "Personal memory", detail: "Designed for transparent context", color: theme.colors.blue, route: "/(tabs)/memory" as const },
-  { icon: "repeat-outline" as const, title: "Routines", detail: "Plan repeatable workflows", color: theme.colors.purple, route: "/routines" as const },
+  { icon: "albums-outline" as const, title: "Personal memory", detail: "Saved securely on this device", color: theme.colors.blue, route: "/(tabs)/memory" as const },
+  { icon: "checkmark-done-outline" as const, title: "Tasks", detail: "Your offline action list", color: theme.colors.purple, route: "/tasks" as const },
   { icon: "pulse-outline" as const, title: "Activity", detail: "Review events and task states", color: theme.colors.orange, route: "/activity" as const },
 ];
 
