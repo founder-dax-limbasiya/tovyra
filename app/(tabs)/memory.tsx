@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View 
 import { Ionicons } from "@expo/vector-icons";
 import { ActionButton, Card, Notice, Page, SectionTitle, Tag } from "../../components/ui";
 import { theme } from "../../constants/theme";
-import { addMemoryEntry, deleteMemoryEntry, listMemoryEntries, updateMemoryEntry } from "../../lib/storage/memory";
+import { addMemoryEntry, deleteAllMemoryEntries, deleteMemoryEntry, listMemoryEntries, updateMemoryEntry } from "../../lib/storage/memory";
 import type { MemoryRecord } from "../../types/domain";
 
 const categories: { id: MemoryRecord["category"]; label: string }[] = [
@@ -85,6 +85,28 @@ export default function MemoryScreen() {
     }
   };
 
+  const confirmDeleteAll = () => {
+    Alert.alert(
+      "Delete all memories?",
+      "Every saved memory will be permanently removed from this device. Activity history will remain.",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete all", style: "destructive", onPress: () => {
+          void (async () => {
+            try {
+              const count = await deleteAllMemoryEntries();
+              clearEditor();
+              setNotice(`Deleted ${count} memories from this device.`);
+              await refresh();
+            } catch (cause) {
+              setError(cause instanceof Error ? cause.message : "Could not clear local memory.");
+            }
+          })();
+        } },
+      ]
+    );
+  };
+
   const confirmDelete = (entry: MemoryRecord) => {
     Alert.alert(
       "Delete this memory?",
@@ -141,7 +163,10 @@ export default function MemoryScreen() {
       {notice ? <Notice title="Done" detail={notice} icon="checkmark-circle-outline" /> : null}
       {error ? <Notice title="Storage error" detail={error} icon="alert-circle-outline" /> : null}
 
-      <SectionTitle title="Saved memories" detail={`${entries.length} ON DEVICE`} />
+      <View style={styles.savedHeader}>
+        <SectionTitle title="Saved memories" detail={`${entries.length} ON DEVICE`} />
+        {entries.length > 0 ? <Pressable onPress={confirmDeleteAll} hitSlop={8}><Text style={styles.clearAll}>Clear all</Text></Pressable> : null}
+      </View>
       {loading ? (
         <View style={styles.loading}><ActivityIndicator color={theme.colors.accent} /><Text style={styles.loadingText}>Opening local memory...</Text></View>
       ) : entries.length === 0 ? (
@@ -191,6 +216,8 @@ const styles = StyleSheet.create({
   editorFooter: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   editorButtons: { flexDirection: "row", alignItems: "center", gap: 7 },
   characterCount: { color: theme.colors.faint, fontSize: 9 },
+  savedHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  clearAll: { color: theme.colors.danger, fontSize: 10, fontWeight: "700" },
   loading: { flexDirection: "row", alignItems: "center", gap: 10, padding: 15 },
   loadingText: { color: theme.colors.muted, fontSize: 11 },
   emptyCard: { alignItems: "center", padding: 23 },
