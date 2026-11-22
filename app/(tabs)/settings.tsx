@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
-import { Linking, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Linking, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Card, ListRow, Notice, Page, SectionTitle, Tag, ActionButton } from "../../components/ui";
 import { theme } from "../../constants/theme";
@@ -89,7 +89,7 @@ export default function SettingsScreen() {
             keyboardType="url"
             style={styles.fieldInput}
           />
-          <Text style={styles.fieldHint}>For an Ollama server on your private Wi-Fi, use its LAN address and port 11434. Add /v1 at the end.</Text>
+          <Text style={styles.fieldHint}>For an Ollama server on private Wi-Fi, use its LAN address and port 11434. Add /v1. HTTP is restricted to private/local hosts; use trusted Wi-Fi.</Text>
         </View>
 
         <View style={styles.field}>
