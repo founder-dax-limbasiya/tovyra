@@ -13,12 +13,12 @@ OTHRI is an open-source, Android-first personal AI workspace bringing chat, memo
 ## Current screens and working features
 
 - **Home:** workspace overview and prompt hand-off to Chat.
-- **Chat:** calls the OpenAI-compatible endpoint that you configure. Conversation messages stay in screen memory only; they are not persisted yet.
+- **Chat:** calls the OpenAI-compatible endpoint that you configure. Supports two narrow local tool requests: `create_task` and `save_memory`. Each request shows its exact arguments and waits for your approval. Conversation messages stay in screen memory only; they are not persisted yet.
 - **Tasks:** create, list, complete, reopen and delete tasks stored locally on the phone.
 - **Memory:** create, list, edit and delete personal memory entries stored in the phone's local SQLite database.
-- **Activity:** records local memory and task changes.
+- **Activity:** records local memory and task changes, plus local chat-tool approval outcomes.
 - **Agents:** catalogue of planning, research, writing and organiser concepts. These are templates, not executable agents.
-- **Permissions:** default-deny policy design. No external tools are connected and no actions can be approved or executed yet.
+- **Permissions:** default-deny policy. The two local tools require per-action approval; all external integrations are disconnected.
 - **Settings:** BYOK endpoint setup, local storage status and privacy controls.
 - **Routines:** draft workflow templates. Nothing is scheduled or run in the background.
 
@@ -34,7 +34,7 @@ http://192.168.1.10:11434/v1
 
 Replace the example address with the server's actual LAN IP and enter the model ID that is installed there. Leave the API key blank for a local Ollama server. The Android phone must be able to reach that server on the network.
 
-For an internet-hosted provider, use an HTTPS API base URL and the provider's API key. HTTP is accepted only for private/local hosts, and a key is rejected over HTTP. Provider settings, including the optional key, are stored using Expo SecureStore, which uses Android Keystore-backed encryption. The key is not hard-coded, committed to Git or sent through an OTHRI backend.
+For an internet-hosted provider, use an HTTPS API base URL ending in `/v1` when required by that provider, and its API key. The provider/model must support OpenAI-compatible chat completions and tool calling for the task and memory actions to work. HTTP is accepted only for private/local hosts, and a key is rejected over HTTP. Provider settings, including the optional key, are stored using Expo SecureStore, which uses Android Keystore-backed encryption. The key is not hard-coded, committed to Git or sent through an OTHRI backend.
 
 **Network caution:** a local Ollama HTTP connection is not encrypted in transit. Use it only on a trusted private network, and do not send sensitive prompts across untrusted Wi-Fi. Running a local model still requires a computer or server with enough resources; the app itself does not provide free inference compute.
 
@@ -82,7 +82,7 @@ Remote builds require an Expo account and are subject to the account's available
 
 ## Current limitations
 
-Authentication, cloud sync, model-tool calling, agent execution, external connectors, server-side approval enforcement, background routine scheduling and end-to-end tests are not implemented. Chat uses ordinary non-streaming OpenAI-compatible completions. Chat history is not persisted. Local memory, tasks and activity use standard SQLite and are not SQLCipher-encrypted in this prototype. The permission centre is a design screen, not an executable action gateway.
+Authentication, cloud sync, multi-step agent orchestration, external connectors, server-side permission enforcement, background routine scheduling and end-to-end tests are not implemented. Model tool calling is limited to two on-device operations (`create_task` and `save_memory`) with explicit per-request approval. The current permission flow is client-side and must not be treated as a security boundary for future external tools. Chat uses ordinary non-streaming OpenAI-compatible completions. Chat history is not persisted. Local memory, tasks and activity use standard SQLite and are not SQLCipher-encrypted in this prototype. The permission centre describes the two local actions and blocked integrations; it is not a server-side action gateway.
 
 ## Open-source and licensing policy
 
