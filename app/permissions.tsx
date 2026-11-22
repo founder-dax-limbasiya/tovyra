@@ -24,7 +24,7 @@ export default function PermissionsScreen() {
         <Text style={styles.policyDescription}>Every integration will start disconnected. An agent must request a narrow permission for a specific action, and sensitive actions must wait for your explicit approval.</Text>
       </Card>
 
-      <SectionTitle title="Connected integrations" detail="0 CONNECTED" />
+      <SectionTitle title="Available capabilities" detail="2 LOCAL TOOLS" />
       <Card style={{ gap: 2 }}>
         {integrations.map((item) => (
           <ListRow key={item.title} icon={item.icon} title={item.title} detail={item.detail} right={<Tag label="DISCONNECTED" tone="warning" />} />
@@ -45,7 +45,7 @@ export default function PermissionsScreen() {
         <View style={styles.ruleCopy}><Text style={styles.ruleTitle}>Approve once, not forever</Text><Text style={styles.ruleDetail}>Approvals should be specific, time-limited and auditable.</Text></View>
       </View>
 
-      <Notice title="Approval gateway is not connected" detail="This is the permission centre design. No tools can execute actions, and there are no pending approvals in this build." icon="information-circle-outline" />
+      <Notice title="Local approval flow is active" detail="This is the permission centre design. Only two local actions can run after you approve them in Chat: create a task or save a memory. Browser, files, messaging, account and device integrations remain unavailable." icon="information-circle-outline" />
       <ActionButton title="View activity history" secondary icon="list-outline" onPress={() => router.push("/activity")} />
     </Page>
   );
