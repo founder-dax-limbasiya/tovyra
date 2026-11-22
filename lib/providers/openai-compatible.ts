@@ -172,3 +172,64 @@ export async function createAssistantResponse(
     clearTimeout(timeout);
   }
 }
+
+export async function listAvailableModels(
+  config: Pick<ProviderConfig, "baseUrl" | "apiKey">
+): Promise<string[]> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20_000);
+
+  try {
+    const headers: Record<string, string> = { Accept: "application/json" };
+    if (config.apiKey) headers.Authorization = `Bearer ${config.apiKey}`;
+
+    let response: Response;
+    try {
+      response = await fetch(`${config.baseUrl}/models`, {
+        method: "GET",
+        headers,
+        signal: controller.signal,
+      });
+    } catch {
+      if (controller.signal.aborted) {
+        throw new Error("Model discovery timed out. Check the provider server and network.");
+      }
+      throw new Error("Could not reach the provider's /models endpoint.");
+    }
+
+    const raw = await response.text();
+    let payload: unknown;
+    try {
+      payload = JSON.parse(raw);
+    } catch {
+      throw new Error(response.ok
+        ? "The provider returned an unexpected model-list response."
+        : `Model discovery failed with HTTP ${response.status}.`);
+    }
+
+    if (!response.ok) {
+      const errorMessage =
+        payload && typeof payload === "object" && "error" in payload &&
+        typeof (payload as { error?: { message?: unknown } }).error?.message === "string"
+          ? (payload as { error: { message: string } }).error.message.slice(0, 240)
+          : `HTTP ${response.status}`;
+      throw new Error(`Model discovery failed: ${errorMessage}`);
+    }
+
+    if (!payload || typeof payload !== "object" || !Array.isArray((payload as { data?: unknown }).data)) {
+      throw new Error("This provider does not expose an OpenAI-compatible /models list. Enter the model ID manually.");
+    }
+
+    const models = (payload as { data: unknown[] }).data
+      .map((item) => {
+        if (!item || typeof item !== "object") return null;
+        const id = (item as { id?: unknown }).id;
+        return typeof id === "string" && id.trim() ? id.trim() : null;
+      })
+      .filter((id): id is string => Boolean(id));
+
+    return Array.from(new Set(models));
+  } finally {
+    clearTimeout(timeout);
+  }
+}
