@@ -89,7 +89,7 @@ export default function SettingsScreen() {
             keyboardType="url"
             style={styles.fieldInput}
           />
-          <Text style={styles.fieldHint}>For an Ollama server on private Wi-Fi, use its LAN address and port 11434. Add /v1. HTTP is restricted to private/local hosts; use trusted Wi-Fi.</Text>
+          <Text style={styles.fieldHint}>For Ollama, use its LAN address and port 11434 with /v1 (for example http://192.168.1.10:11434/v1). For hosted providers, use their documented base URL, usually ending in /v1, and HTTPS. HTTP is restricted to private/local hosts; use trusted Wi-Fi.</Text>
         </View>
 
         <View style={styles.field}>
