@@ -9,6 +9,7 @@ The Android-first client is an Expo Router application. Route screens are groupe
 - Device-only memory, tasks and activity live in `lib/storage/` using Expo SQLite.
 - The user's OpenAI-compatible model endpoint is called directly from the device through `lib/providers/openai-compatible.ts`.
 - Provider URL, model ID and optional API key are stored with Expo SecureStore in `lib/providers/config.ts`. On Android, SecureStore uses Android Keystore-backed encryption.
+- Model discovery requests the provider's OpenAI-compatible `/models` endpoint. If the endpoint does not expose a model list, the user can enter the model ID manually.
 - Provider keys are not hard-coded into the JS bundle or committed to Git. OTHRI sends them only as authorization to the exact provider URL the user saves.
 - The mobile app accepts HTTPS providers. Plain HTTP is allowed only for loopback or private/local network hosts, and an API key is rejected over HTTP. The Android native build permits cleartext so local Ollama can be reached, but the provider URL validator restricts HTTP endpoints to private/local hosts. Local HTTP traffic is still unencrypted in transit and should be used only on a trusted network.
 - `lib/api/client.ts` is a provider-neutral transport boundary for a future OTHRI backend; it is not currently used for chat.
@@ -44,6 +45,7 @@ The client must not infer that an action succeeded merely because a request was 
 Implemented:
 - Expo/React Native mobile shell and navigation.
 - BYOK OpenAI-compatible, non-streaming chat request with model tool calling.
+- Optional model discovery through the configured provider's `/models` endpoint.
 - Client-side per-call approval for the two allowlisted local actions `create_task` and `save_memory`.
 - Secure device storage for provider settings.
 - Local SQLite memory create/list/edit/delete.
