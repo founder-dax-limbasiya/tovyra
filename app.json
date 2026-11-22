@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "OTHRI",
+    "slug": "othri",
+    "scheme": "othri",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "plugins": ["expo-router"],
+    "android": {
+      "package": "com.othri.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#090B10"
+      }
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
